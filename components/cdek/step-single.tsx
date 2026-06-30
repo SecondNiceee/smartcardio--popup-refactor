@@ -594,25 +594,16 @@ export function StepSingle({
         </div>
       )}
 
-      {/* Чехол */}
-      <label
-        htmlFor="add-case"
-        className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 transition-colors hover:bg-muted/70 has-[[data-state=checked]]:border-primary/40 has-[[data-state=checked]]:bg-primary/5"
-      >
-        <Checkbox
-          id="add-case"
-          checked={withCase}
-          onCheckedChange={(v) => setWithCase(!!v)}
-          className="mt-0.5 shrink-0"
+      {/* Комментарий */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="cdek-comment">Комментарий к заказу</Label>
+        <Input
+          id="cdek-comment"
+          value={data.comment}
+          onChange={(e) => onChange({ comment: e.target.value })}
+          placeholder="Особые пожелания..."
         />
-        <div className="flex flex-1 items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="text-sm font-medium">Добавить чехол для хранения прибора</span>
-          </div>
-          <span className="shrink-0 text-sm font-semibold text-primary">+{CASE_PRICE} ₽</span>
-        </div>
-      </label>
+      </div>
 
       {/* Промокод */}
       <div
@@ -684,6 +675,27 @@ export function StepSingle({
           {deliveryType && deliverySum > 0 ? `${Math.round(deliverySum).toLocaleString("ru-RU")} ₽` : "—"}
         </span>
       </div>
+
+      {/* Чехол */}
+      <label
+        htmlFor="add-case"
+        className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 transition-colors hover:bg-muted/70 has-[[data-state=checked]]:border-primary/40 has-[[data-state=checked]]:bg-primary/5"
+      >
+        <Checkbox
+          id="add-case"
+          checked={withCase}
+          onCheckedChange={(v) => setWithCase(!!v)}
+          className="mt-0.5 shrink-0"
+        />
+        <div className="flex flex-1 items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="text-sm font-medium">Добавить чехол для хранения прибора</span>
+          </div>
+          <span className="shrink-0 text-sm font-semibold text-primary">+{CASE_PRICE} ₽</span>
+        </div>
+      </label>
+
       <div
         className={cn(
           "flex items-center justify-between rounded-xl border px-4 py-3 transition-colors",
@@ -697,17 +709,6 @@ export function StepSingle({
         <span className={cn("text-base font-bold", isValid ? "text-green-600 dark:text-green-400" : "text-primary")}>
           {totalPrice.toLocaleString("ru-RU")} ₽
         </span>
-      </div>
-
-      {/* Комментарий */}
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="cdek-comment">Комментарий к заказу</Label>
-        <Input
-          id="cdek-comment"
-          value={data.comment}
-          onChange={(e) => onChange({ comment: e.target.value })}
-          placeholder="Особые пожелания..."
-        />
       </div>
 
       {/* Согласие */}
