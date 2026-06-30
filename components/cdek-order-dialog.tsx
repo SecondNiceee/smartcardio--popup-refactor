@@ -8,13 +8,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { StepBar } from "@/components/cdek/step-bar"
-import { StepForm } from "@/components/cdek/step-form"
-import { DeliveryTypePicker } from "@/components/cdek/delivery-type-picker"
-import { StepPvz } from "@/components/cdek/step-pvz"
-import { StepCourier } from "@/components/cdek/step-courier"
-import { StepConfirm } from "@/components/cdek/step-confirm"
-import type { FormData, PvzLocation, CourierLocation, DeliveryType, Step } from "@/components/cdek/types"
+import { StepSingle } from "@/components/cdek/step-single"
+import type { FormData, PvzLocation, CourierLocation, DeliveryType } from "@/components/cdek/types"
 // shipment_point берётся из env CDEK_SHIPMENT_POINT через API route
 
 import { log, logerr, logerr2, logwarn } from 'lib/utils'
@@ -42,14 +37,6 @@ const INITIAL_FORM: FormData = {
   consent: true,
 }
 
-const STEP_TITLE: Partial<Record<Step, string>> = {
-  form: "Оформление заказа",
-  "delivery-type": "Способ доставки",
-  pvz: "Выберите пункт выдачи",
-  courier: "Адрес доставки",
-  confirm: "Подтверждение заказа",
-}
-
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function CdekOrderDialog({
@@ -68,7 +55,6 @@ export function CdekOrderDialog({
     if (!isControlled) setOpenInternal(next)
     onOpenChangeProp?.(next)
   }
-  const [step, setStep] = useState<Step>("form")
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM)
   const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null)
   const [selectedPvz, setSelectedPvz] = useState<PvzLocation | null>(null)
@@ -83,7 +69,6 @@ export function CdekOrderDialog({
     setOpen(next)
     if (!next) {
       setTimeout(() => {
-        setStep("form")
         setFormData(INITIAL_FORM)
         setDeliveryType(null)
         setSelectedPvz(null)
@@ -94,11 +79,6 @@ export function CdekOrderDialog({
         setSubmitError(null)
       }, 300)
     }
-  }
-
-  function handleDeliveryTypeNext() {
-    if (!deliveryType) return
-    setStep(deliveryType)
   }
 
   async function handleSubmitOrder(withCase: boolean, discountPercent = 0, promocodeId: string | null = null) {
@@ -223,84 +203,33 @@ export function CdekOrderDialog({
                 />
             </div>
               <DialogTitle className="text-center text-xl">
-                {STEP_TITLE[step] ?? "Оформление заказа"}
+                Оформление заказа
               </DialogTitle>
               <DialogDescription className="sr-only">
                 Оформление заказа СмартКардио® через СДЭК
               </DialogDescription>
             </DialogHeader>
 
-            <StepBar step={step} />
-
             <div className="mt-1">
-              {step === "form" && (
-                <StepForm
-                  data={formData}
-                  onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
-                  onNext={() => setStep("delivery-type")}
-                />
-              )}
-
-              {step === "delivery-type" && (
-                <DeliveryTypePicker
-                  selected={deliveryType}
-                  onSelect={setDeliveryType}
-                  onBack={() => setStep("form")}
-                  onNext={handleDeliveryTypeNext}
-                />
-              )}
-
-              {step === "pvz" && (
-                <StepPvz
-                  cityCode={formData.cityCode}
-                  regionCode={formData.regionCode}
-                  cityName={formData.city}
-                  selectedPvz={selectedPvz}
-                  formData={{
-                    name: formData.name,
-                    phone: formData.phone,
-                    email: formData.email,
-                    comment: formData.comment,
-                  }}
-                  onSelect={setSelectedPvz}
-                  onBack={() => setStep("delivery-type")}
-                  onNext={(sum) => {
-                    setDeliverySum(sum)
-                    setDeliveryTariffCode(TARIFF_PVZ_TO_PVZ)
-                    setStep("confirm")
-                  }}
-                  onSwitchToCourier={() => setStep("courier")}
-                />
-              )}
-
-              {step === "courier" && (
-                <StepCourier
-                  cityCode={formData.cityCode}
-                  cityName={formData.city}
-                  courierLocation={courierLocation}
-                  onChange={setCourierLocation}
-                  onBack={() => setStep("delivery-type")}
-                  onNext={(sum, tariffCode) => {
-                    setDeliverySum(sum)
-                    setDeliveryTariffCode(tariffCode)
-                    setStep("confirm")
-                  }}
-                />
-              )}
-
-              {step === "confirm" && (
-                <StepConfirm
-                  data={formData}
-                  deliveryType={deliveryType ?? "pvz"}
-                  pvz={selectedPvz}
-                  courierLocation={courierLocation}
-                  deliverySum={deliverySum}
-                  onBack={() => setStep(deliveryType ?? "pvz")}
-                  onSubmit={(withCase, discountPercent, promocodeId) => handleSubmitOrder(withCase, discountPercent, promocodeId)}
-                  loading={submitting}
-                  error={submitError}
-                />
-              )}
+              <StepSingle
+                data={formData}
+                onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
+                deliveryType={deliveryType}
+                onDeliveryTypeChange={setDeliveryType}
+                selectedPvz={selectedPvz}
+                onSelectPvz={setSelectedPvz}
+                courierLocation={courierLocation}
+                onCourierChange={setCourierLocation}
+                onDeliveryChange={(sum, tariffCode) => {
+                  setDeliverySum(sum)
+                  setDeliveryTariffCode(tariffCode)
+                }}
+                onSubmit={(withCase, discountPercent, promocodeId) =>
+                  handleSubmitOrder(withCase, discountPercent, promocodeId)
+                }
+                loading={submitting}
+                error={submitError}
+              />
             </div>
           </>
       </DialogContent>
