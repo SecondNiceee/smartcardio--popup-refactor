@@ -657,7 +657,7 @@ export function StepSingle({
 
       {/* Итоги */}
       <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
-        <span className="text-sm text-muted-foreground">{itemName}</span>
+        <span className="text-sm font-medium text-foreground">{itemName}</span>
         <div className="flex flex-col items-end">
           {isValid && (
             <span className="text-xs text-muted-foreground line-through">
@@ -670,7 +670,7 @@ export function StepSingle({
         </div>
       </div>
       <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
-        <span className="text-sm text-muted-foreground">Доставка</span>
+        <span className="text-sm font-medium text-foreground">Доставка</span>
         <span className="text-sm font-medium">
           {deliveryType && deliverySum > 0 ? `${Math.round(deliverySum).toLocaleString("ru-RU")} ₽` : "—"}
         </span>
