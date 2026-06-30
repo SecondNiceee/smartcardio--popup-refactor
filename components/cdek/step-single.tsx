@@ -327,12 +327,6 @@ export function StepSingle({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex items-center justify-center rounded-xl border border-green-500/40 bg-green-50/60 px-4 py-2.5 dark:bg-green-950/20">
-        <span className="text-sm font-medium text-green-700 dark:text-green-400">
-          Оплата заказа при получении
-        </span>
-      </div>
-
       {/* Контактные данные */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
@@ -696,7 +690,10 @@ export function StepSingle({
           isValid ? "border-green-500/40 bg-green-50/60 dark:bg-green-950/20" : "border-primary/30 bg-primary/5",
         )}
       >
-        <span className="text-base font-semibold">Итого к оплате</span>
+        <span className="text-base font-semibold">
+          Итого к оплате{" "}
+          <span className="font-medium text-green-600 dark:text-green-400">(при получении)</span>
+        </span>
         <span className={cn("text-base font-bold", isValid ? "text-green-600 dark:text-green-400" : "text-primary")}>
           {totalPrice.toLocaleString("ru-RU")} ₽
         </span>
