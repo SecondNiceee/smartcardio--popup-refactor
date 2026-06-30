@@ -1,0 +1,16 @@
+# CDEK OAuth token cache
+/token.json
+
+# Generated images
+/public/images/r/
+
+/build/
+/node_modules/
+/.next/
+/.idea/
+
+/pnpm-lock.yaml
+/package-lock.json
+/next-env.d.ts
+
+/.env
